@@ -1,6 +1,4 @@
-
 import { ComponentType, TemplateOption, AdvancedOptions } from './types';
-import React from 'react'; // Required for JSX type if used, even if not directly using JSX here
 
 // Helper type for icon mapping
 type IconMap = {

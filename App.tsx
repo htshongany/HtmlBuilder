@@ -194,20 +194,20 @@ const App: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-800 mb-3">1. Choose Your Method</h3>
               <div className="grid grid-cols-1 gap-3">
                   <RadioCard
-                      id="customUpload"
-                      value={UploadOption.CustomPrompt}
-                      currentValue={uploadOption}
-                      onChange={setUploadOption}
-                      title="Upload with Custom Prompt"
-                      description="Image & detailed instructions."
-                  />
-                  <RadioCard
                       id="basicUpload"
                       value={UploadOption.Basic}
                       currentValue={uploadOption}
                       onChange={setUploadOption}
                       title="Upload Image (Basic)"
                       description="Generate with default settings."
+                  />
+                  <RadioCard
+                      id="customUpload"
+                      value={UploadOption.CustomPrompt}
+                      currentValue={uploadOption}
+                      onChange={setUploadOption}
+                      title="Upload with Custom Prompt"
+                      description="Image & detailed instructions."
                   />
               </div>
             </div>
