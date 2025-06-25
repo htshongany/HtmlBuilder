@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Web Page Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6366f1', // Corresponds to indigo-500
+            secondary: '#8b5cf6', // Corresponds to violet-500
+            dark: '#1e293b' // Corresponds to slate-800
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+          },
+          keyframes: {
+             pulse: {
+                '0%, 100%': { opacity: 1 },
+                '50%': { opacity: 0.5 },
+             }
+          }
+        }
+      },
+      plugins: [],
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      /* background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%); removed to be set on App's root div */
+      min-height: 100vh;
+    }
+    .preview-container-bg {
+      background-image: 
+        linear-gradient(45deg, #e5e7eb 25%, transparent 25%),
+        linear-gradient(-45deg, #e5e7eb 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #e5e7eb 75%),
+        linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+    .code-block-container pre {
+      max-height: 100%; /* Ensure pre can fill height */
+    }
+     /* Custom scrollbar for WebKit browsers (used for code panel's pre) */
+    .code-block-container pre::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    .code-block-container pre::-webkit-scrollbar-track {
+      background: #2d3748; /* bg-slate-700 or similar */
+      border-radius: 10px;
+    }
+    .code-block-container pre::-webkit-scrollbar-thumb {
+      background: #4a5568; /* bg-slate-600 or similar */
+      border-radius: 10px;
+    }
+    .code-block-container pre::-webkit-scrollbar-thumb:hover {
+      background: #718096; /* bg-slate-500 or similar */
+    }
+    /* For Firefox (used for code panel's pre) */
+    .code-block-container pre {
+      scrollbar-width: thin;
+      scrollbar-color: #4a5568 #2d3748;
+    }
+
+    /* Generic custom scrollbar for other elements */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9; /* slate-100 */
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1; /* slate-300 */
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8; /* slate-400 */
+    }
+    .custom-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 #f1f5f9;
+    }
+
+    .card-hover-effect { /* This class might be less used if panels have fixed shadow */
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    .card-hover-effect:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      transform: translateY(-2px);
+    }
+    .component-btn-style {
+      transition: all 0.2s ease;
+    }
+    .component-btn-style:hover:not(.active-component-btn) {
+       transform: translateY(-2px);
+       background-color: #e5e7eb; /* gray-200 */
+    }
+    .active-component-btn {
+      background-color: #6366f1; /* primary color */
+      color: white;
+    }
+    .custom-radio:checked {
+        background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+        border-color: #6366f1; /* primary color */
+        background-color: #6366f1; /* primary color */
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.6.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="./index.tsx"></script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

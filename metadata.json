@@ -1,0 +1,5 @@
+{
+  "name": "AI Web Page Generator from Image",
+  "description": "An AI-powered application that uses an image as a reference to generate HTML code for web pages or sections, styled with Tailwind CSS.",
+  "requestFramePermissions": []
+}
