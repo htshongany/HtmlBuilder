@@ -65,6 +65,21 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
       }
     }
   };
+
+  const handleDownload = () => {
+    if (!code || isLoading) return;
+    const blob = new Blob([code], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'generated.html';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 0);
+  };
   
   const animatedDots = ['.', '..', '...', '.'];
   const codeToDisplay = isLoading ? 
@@ -88,6 +103,14 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
               aria-label="Copy code"
             >
               <Icon name={copied ? "fas fa-check" : "fas fa-copy"} className={`${copied ? "text-green-400" : ""} text-sm`} />
+            </button>
+            <button
+              onClick={handleDownload}
+              disabled={!code || isLoading}
+              className="p-1.5 mr-2 rounded-md bg-slate-700 hover:bg-slate-600 transition text-slate-300 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+              aria-label="Download code"
+            >
+              <Icon name="fas fa-download" className="text-sm" />
             </button>
             <button
               onClick={onToggleFullscreen}
@@ -115,6 +138,14 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
             aria-label="Copy code"
           >
             <Icon name={copied ? "fas fa-check" : "fas fa-copy"} className={`${copied ? "text-green-500" : ""} text-sm`} />
+          </button>
+          <button
+            onClick={handleDownload}
+            disabled={!code || isLoading}
+            className="p-1.5 mr-2 rounded-md bg-gray-100 hover:bg-gray-200 transition text-gray-500 hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+            aria-label="Download code"
+          >
+            <Icon name="fas fa-download" className="text-sm" />
           </button>
           <button
             onClick={onToggleFullscreen}
