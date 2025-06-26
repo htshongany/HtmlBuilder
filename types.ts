@@ -22,6 +22,8 @@ export enum ComponentType {
   Stats = 'Stats',
   Blog = 'Blog',
   CTA = 'Call To Action',
+  Timeline = 'Timeline',
+  Stepper = 'Stepper',
 }
 
 export interface AdvancedOptions {

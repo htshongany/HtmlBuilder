@@ -175,6 +175,8 @@ const App: React.FC = () => {
     </label>
   );
 
+  const COMPONENTS_VISIBLE_INIT = 5;
+  const [showAllComponents, setShowAllComponents] = useState(false);
 
   return (
     <div className="flex flex-col h-screen bg-slate-100">
@@ -240,7 +242,7 @@ const App: React.FC = () => {
               <div>
                 <h3 className="text-base font-semibold text-gray-800 mb-2">Component Type</h3>
                 <div className="grid grid-cols-3 gap-2">
-                  {COMPONENT_TYPES_ARRAY.map((type) => (
+                  {(showAllComponents ? COMPONENT_TYPES_ARRAY : COMPONENT_TYPES_ARRAY.slice(0, COMPONENTS_VISIBLE_INIT)).map((type) => (
                     <button
                       key={type}
                       onClick={() => setComponentType(type)}
@@ -250,6 +252,26 @@ const App: React.FC = () => {
                       <span className="text-xs font-medium mt-0.5">{type}</span>
                     </button>
                   ))}
+                  {!showAllComponents && COMPONENT_TYPES_ARRAY.length > COMPONENTS_VISIBLE_INIT && (
+                    <button
+                      onClick={() => setShowAllComponents(true)}
+                      className="py-2 px-1.5 bg-gray-200 rounded-md text-gray-700 flex flex-col items-center justify-center text-center hover:bg-gray-300 transition"
+                      aria-label="Show more components"
+                    >
+                      <Icon name="fas fa-ellipsis-h" className="mb-0.5 text-lg" />
+                      <span className="text-xs font-medium mt-0.5">Voir plus</span>
+                    </button>
+                  )}
+                  {showAllComponents && COMPONENT_TYPES_ARRAY.length > COMPONENTS_VISIBLE_INIT && (
+                    <button
+                      onClick={() => setShowAllComponents(false)}
+                      className="py-2 px-1.5 bg-gray-200 rounded-md text-gray-700 flex flex-col items-center justify-center text-center hover:bg-gray-300 transition"
+                      aria-label="Show less components"
+                    >
+                      <Icon name="fas fa-chevron-up" className="mb-0.5 text-lg" />
+                      <span className="text-xs font-medium mt-0.5">Voir moins</span>
+                    </button>
+                  )}
                 </div>
               </div>
               

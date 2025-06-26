@@ -24,6 +24,8 @@ export const COMPONENT_TYPE_ICONS: IconMap = {
   [ComponentType.Stats]: "fas fa-chart-bar",
   [ComponentType.Blog]: "fas fa-blog",
   [ComponentType.CTA]: "fas fa-bullhorn",
+  [ComponentType.Timeline]: "fas fa-stream",
+  [ComponentType.Stepper]: "fas fa-shoe-prints",
 };
 
 export const COMPONENT_TYPES_ARRAY: ComponentType[] = [
@@ -45,6 +47,8 @@ export const COMPONENT_TYPES_ARRAY: ComponentType[] = [
   ComponentType.Stats,
   ComponentType.Blog,
   ComponentType.CTA,
+  ComponentType.Timeline,
+  ComponentType.Stepper,
 ];
 
 export const INITIAL_ADVANCED_OPTIONS: AdvancedOptions = {
