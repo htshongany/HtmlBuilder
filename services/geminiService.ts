@@ -6,11 +6,9 @@ const API_KEY = process.env.API_KEY;
 
 if (!API_KEY) {
   console.error("API_KEY environment variable is not set. Please ensure it is configured.");
-  // alert("Gemini API Key is not configured. Please contact support or check environment variables.");
-  // In a real app, you might want to prevent API calls or show a more prominent error.
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY || "MISSING_API_KEY" }); // Provide a fallback to avoid crash if API_KEY is undefined
+const ai = new GoogleGenAI({ apiKey: API_KEY || "MISSING_API_KEY" });
 
 function buildPrompt(params: GenerationParams): string {
   let prompt = `You are an expert AI assistant that generates clean, responsive HTML code with Tailwind CSS classes.
@@ -20,8 +18,7 @@ The JavaScript should be included within a single <script> tag, ideally placed a
 Do NOT include any explanatory text or comments outside the HTML and script tags. Do NOT use markdown code fences (like \`\`\`html ... \`\`\`) around the output. Output only the raw HTML code (and script tag if applicable).
 
 User Specifications:
-- Target Component Type: "${params.componentType}"
-- Desired Structure/Template: "${params.templateStructure}"`;
+- Target Component Type: "${params.componentType}"`;
 
   if (params.customPromptText && params.customPromptText.trim() !== "") {
     prompt += `\n- Custom Instructions: "${params.customPromptText.trim()}"`;

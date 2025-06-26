@@ -1,5 +1,4 @@
-
-import React, { useState, useCallback, ChangeEvent, DragEvent } from 'react';
+import React, { useState, useCallback, ChangeEvent, DragEvent, useRef, useEffect } from 'react';
 import Icon from './Icon';
 import { MAX_FILE_SIZE_BYTES, MAX_FILE_SIZE_MB, ACCEPTED_IMAGE_TYPES } from '../constants';
 
@@ -11,11 +10,10 @@ interface ImageUploadProps {
 const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect, imagePreviewUrl }) => {
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [fileName, setFileName] = useState<string | null>(null);
+  const uploadRef = useRef<HTMLDivElement>(null);
 
   const handleFileChange = useCallback((file: File | null) => {
     setError(null);
-    setFileName(null);
 
     if (file) {
       if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
@@ -32,7 +30,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect, imagePreviewUr
       const reader = new FileReader();
       reader.onloadend = () => {
         onImageSelect(file, reader.result as string);
-        setFileName(file.name);
       };
       reader.onerror = () => {
         setError('Failed to read file.');
@@ -71,7 +68,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect, imagePreviewUr
   };
   
   const handleRemoveImage = () => {
-    setFileName(null);
     onImageSelect(null, null);
     // Reset file input value to allow re-uploading the same file
     const fileInput = document.getElementById('image-upload-input') as HTMLInputElement;
@@ -80,6 +76,28 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect, imagePreviewUr
     }
   };
 
+  // Coller une image depuis le presse-papier
+  useEffect(() => {
+    const handlePaste = (event: ClipboardEvent) => {
+      if (event.clipboardData) {
+        const items = event.clipboardData.items;
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          if (item.type.startsWith('image/')) {
+            const file = item.getAsFile();
+            if (file) {
+              handleFileChange(file);
+              event.preventDefault();
+              break;
+            }
+          }
+        }
+      }
+    };
+    const node = uploadRef.current;
+    if (node) node.addEventListener('paste', handlePaste as any);
+    return () => { if (node) node.removeEventListener('paste', handlePaste as any); };
+  }, [handleFileChange]);
 
   return (
     <div className="mb-6">
@@ -87,6 +105,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect, imagePreviewUr
         Upload Design Image
       </label>
       <div
+        ref={uploadRef}
+        tabIndex={0}
         className={`flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-xl cursor-pointer transition-colors
           ${isDragging ? 'border-primary bg-indigo-50' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'}
           ${error ? 'border-red-500' : ''}`}
@@ -94,6 +114,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect, imagePreviewUr
         onDrop={onDrop}
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
+        onPaste={() => {}}
+        aria-label="Upload or paste image"
       >
         <input
           id="image-upload-input"
@@ -102,22 +124,21 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect, imagePreviewUr
           accept={ACCEPTED_IMAGE_TYPES.join(',')}
           onChange={onFileInputChange}
         />
-        {imagePreviewUrl && fileName ? (
+        {imagePreviewUrl ? (
           <div className="flex flex-col items-center justify-center text-center p-2 h-full">
             <img src={imagePreviewUrl} alt="Preview" className="max-h-28 object-contain rounded mb-2" />
-            <p className="text-sm font-medium text-gray-700 truncate max-w-full px-2">{fileName}</p>
             <button 
                 onClick={(e) => { e.stopPropagation(); handleRemoveImage(); }} 
-                className="mt-1 text-xs text-red-500 hover:text-red-700 font-semibold"
+                className="mt-1 text-red-500 hover:text-red-700 text-xl" aria-label="Remove image"
             >
-                Remove
+                <Icon name="fas fa-trash" />
             </button>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
             <Icon name="fas fa-cloud-upload-alt" className="text-4xl text-gray-400 mb-3" />
             <p className="mb-2 text-sm text-gray-500">
-              <span className="font-semibold">Click to upload</span> or drag & drop
+              <span className="font-semibold">Click to upload</span> or drag & drop or <span className="underline">paste</span>
             </p>
             <p className="text-xs text-gray-500">PNG, JPG, GIF, WEBP (MAX. {MAX_FILE_SIZE_MB}MB)</p>
           </div>

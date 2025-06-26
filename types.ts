@@ -1,4 +1,3 @@
-
 export enum UploadOption {
   Basic = 'basic',
   CustomPrompt = 'customPrompt',
@@ -11,14 +10,18 @@ export enum ComponentType {
   Cart = 'Cart',
   Hero = 'Hero',
   FullPage = 'Full Page',
-}
-
-export enum TemplateOption {
-  DefaultTailwind = 'Default Tailwind Structure',
-  ModernLandingPage = 'Modern Landing Page',
-  EcommerceProductCard = 'E-commerce Product Card',
-  DashboardLayout = 'Dashboard Layout',
-  MinimalPortfolio = 'Minimal Portfolio',
+  Card = 'Card',
+  Pricing = 'Pricing',
+  Testimonial = 'Testimonial',
+  Feature = 'Feature',
+  ContactForm = 'Contact Form',
+  Gallery = 'Gallery',
+  Newsletter = 'Newsletter',
+  Team = 'Team',
+  FAQ = 'FAQ',
+  Stats = 'Stats',
+  Blog = 'Blog',
+  CTA = 'Call To Action',
 }
 
 export interface AdvancedOptions {
@@ -33,7 +36,6 @@ export interface GenerationParams {
   mimeType: string;
   customPromptText: string;
   componentType: ComponentType;
-  templateStructure: TemplateOption;
   advancedOptions: AdvancedOptions;
 }
 

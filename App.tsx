@@ -4,11 +4,11 @@ import ImageUpload from './components/ImageUpload';
 import PreviewPanel from './components/PreviewPanel';
 import CodePanel from './components/CodePanel';
 import { generateHtmlFromImage } from './services/geminiService';
-import { UploadOption, ComponentType, TemplateOption, AdvancedOptions, GenerationParams, GroundingChunk } from './types';
+import { UploadOption, ComponentType, AdvancedOptions, GenerationParams, GroundingChunk } from './types';
 import { 
   COMPONENT_TYPES_ARRAY, COMPONENT_TYPE_ICONS, 
-  TEMPLATE_OPTIONS_ARRAY, INITIAL_ADVANCED_OPTIONS,
-  DEFAULT_COMPONENT_TYPE, DEFAULT_TEMPLATE_OPTION,
+  INITIAL_ADVANCED_OPTIONS,
+  DEFAULT_COMPONENT_TYPE,
   SAMPLE_HTML_PREVIEW, SAMPLE_GENERATED_CODE
 } from './constants';
 
@@ -19,7 +19,6 @@ const App: React.FC = () => {
   const [customPrompt, setCustomPrompt] = useState<string>('');
   
   const [componentType, setComponentType] = useState<ComponentType>(DEFAULT_COMPONENT_TYPE);
-  const [templateStructure, setTemplateStructure] = useState<TemplateOption>(DEFAULT_TEMPLATE_OPTION);
   const [advancedOptions, setAdvancedOptions] = useState<AdvancedOptions>(INITIAL_ADVANCED_OPTIONS);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -53,7 +52,6 @@ const App: React.FC = () => {
     setImagePreviewUrl(null);
     setCustomPrompt('');
     setComponentType(DEFAULT_COMPONENT_TYPE);
-    setTemplateStructure(DEFAULT_TEMPLATE_OPTION);
     setAdvancedOptions(INITIAL_ADVANCED_OPTIONS);
     setGeneratedHtml(SAMPLE_HTML_PREVIEW);
     setGeneratedCodeForDisplay(SAMPLE_GENERATED_CODE);
@@ -95,7 +93,6 @@ const App: React.FC = () => {
       mimeType: (uploadOption === UploadOption.Basic && selectedImageFile) ? selectedImageFile.type : 'text/plain',
       customPromptText: customPrompt,
       componentType,
-      templateStructure,
       advancedOptions,
     };
 
@@ -257,18 +254,6 @@ const App: React.FC = () => {
               </div>
               
               <div>
-                <div className="mb-3">
-                  <label htmlFor="templateStructure" className="block text-sm font-medium text-gray-700 mb-1.5">Template Structure</label>
-                  <select
-                    id="templateStructure"
-                    value={templateStructure}
-                    onChange={(e) => setTemplateStructure(e.target.value as TemplateOption)}
-                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition-shadow focus:shadow-sm text-sm"
-                  >
-                    {TEMPLATE_OPTIONS_ARRAY.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                  </select>
-                </div>
-                
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">Advanced Options</label>
                   <div className="space-y-1.5">

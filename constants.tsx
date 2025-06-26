@@ -1,4 +1,4 @@
-import { ComponentType, TemplateOption, AdvancedOptions } from './types';
+import { ComponentType, AdvancedOptions } from './types';
 
 // Helper type for icon mapping
 type IconMap = {
@@ -7,11 +7,23 @@ type IconMap = {
 
 export const COMPONENT_TYPE_ICONS: IconMap = {
   [ComponentType.Menu]: "fas fa-bars",
-  [ComponentType.Section]: "fas fa-puzzle-piece", // Changed from fa-square for better semantics
+  [ComponentType.Section]: "fas fa-puzzle-piece",
   [ComponentType.Footer]: "fas fa-shoe-prints",
   [ComponentType.Cart]: "fas fa-shopping-cart",
   [ComponentType.Hero]: "fas fa-star",
   [ComponentType.FullPage]: "fas fa-window-maximize",
+  [ComponentType.Card]: "fas fa-id-card",
+  [ComponentType.Pricing]: "fas fa-tags",
+  [ComponentType.Testimonial]: "fas fa-comment-dots",
+  [ComponentType.Feature]: "fas fa-cogs",
+  [ComponentType.ContactForm]: "fas fa-envelope-open-text",
+  [ComponentType.Gallery]: "fas fa-images",
+  [ComponentType.Newsletter]: "fas fa-paper-plane",
+  [ComponentType.Team]: "fas fa-users",
+  [ComponentType.FAQ]: "fas fa-question-circle",
+  [ComponentType.Stats]: "fas fa-chart-bar",
+  [ComponentType.Blog]: "fas fa-blog",
+  [ComponentType.CTA]: "fas fa-bullhorn",
 };
 
 export const COMPONENT_TYPES_ARRAY: ComponentType[] = [
@@ -21,14 +33,18 @@ export const COMPONENT_TYPES_ARRAY: ComponentType[] = [
   ComponentType.Cart,
   ComponentType.Hero,
   ComponentType.FullPage,
-];
-
-export const TEMPLATE_OPTIONS_ARRAY: TemplateOption[] = [
-  TemplateOption.DefaultTailwind,
-  TemplateOption.ModernLandingPage,
-  TemplateOption.EcommerceProductCard,
-  TemplateOption.DashboardLayout,
-  TemplateOption.MinimalPortfolio,
+  ComponentType.Card,
+  ComponentType.Pricing,
+  ComponentType.Testimonial,
+  ComponentType.Feature,
+  ComponentType.ContactForm,
+  ComponentType.Gallery,
+  ComponentType.Newsletter,
+  ComponentType.Team,
+  ComponentType.FAQ,
+  ComponentType.Stats,
+  ComponentType.Blog,
+  ComponentType.CTA,
 ];
 
 export const INITIAL_ADVANCED_OPTIONS: AdvancedOptions = {
@@ -39,7 +55,6 @@ export const INITIAL_ADVANCED_OPTIONS: AdvancedOptions = {
 };
 
 export const DEFAULT_COMPONENT_TYPE = ComponentType.Section;
-export const DEFAULT_TEMPLATE_OPTION = TemplateOption.DefaultTailwind;
 
 export const GEMINI_MODEL_TEXT = 'gemini-2.5-flash-preview-04-17';
 // export const GEMINI_MODEL_IMAGE = 'imagen-3.0-generate-002'; // Not used for HTML generation directly here
