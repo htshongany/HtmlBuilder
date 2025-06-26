@@ -23,5 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-# my files
-rapport.md 
+
+# Ignore rapport directory
+rapport/

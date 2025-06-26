@@ -5,9 +5,10 @@ import { MAX_FILE_SIZE_BYTES, MAX_FILE_SIZE_MB, ACCEPTED_IMAGE_TYPES } from '../
 interface ImageUploadProps {
   onImageSelect: (file: File | null, dataUrl: string | null) => void;
   imagePreviewUrl: string | null;
+  hideLabel?: boolean;
 }
 
-const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect, imagePreviewUrl }) => {
+const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect, imagePreviewUrl, hideLabel }) => {
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const uploadRef = useRef<HTMLDivElement>(null);
@@ -101,9 +102,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect, imagePreviewUr
 
   return (
     <div className="mb-6">
-      <label htmlFor="image-upload-input" className="block text-sm font-medium text-gray-700 mb-2">
-        Upload Design Image
-      </label>
+      {!hideLabel && (
+        <label htmlFor="image-upload-input" className="block text-sm font-medium text-gray-700 mb-2">
+          Upload Design Image
+        </label>
+      )}
       <div
         ref={uploadRef}
         tabIndex={0}
