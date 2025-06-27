@@ -4,9 +4,10 @@ import hljs from 'highlight.js/lib/core';
 import html from 'highlight.js/lib/languages/xml';
 import CodeMirror from '@uiw/react-codemirror';
 import { html as htmlLang } from '@codemirror/lang-html';
+import { githubDark } from '@uiw/codemirror-theme-github';
 // @ts-ignore
 import 'highlight.js/styles/github-dark.css';
-import '../custom-scrollbar.css'; // Ajout du style scrollbar globalement
+import '../css/custom-scrollbar.css';
 
 hljs.registerLanguage('html', html);
 
@@ -122,55 +123,55 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
             {/* Contrôles de taille de police en fullscreen */}
             <button
               onClick={handleDecreaseFont}
-              className="p-1.5 mr-1 bg-slate-700 hover:bg-slate-600 transition text-slate-300 text-xs"
+              className="p-1.5 mr-1 bg-transparent hover:bg-gray-200 transition text-gray-500 text-xs group"
               aria-label="Réduire la taille du texte"
               title="Réduire la taille du texte"
             >
-              <Icon name="fas fa-minus" className="text-sm" />
+              <Icon name="fas fa-minus" className="text-base group-hover:text-primary cursor-pointer transition-colors" />
             </button>
             <button
               onClick={handleIncreaseFont}
-              className="p-1.5 mr-2 bg-slate-700 hover:bg-slate-600 transition text-slate-300 text-xs"
+              className="p-1.5 mr-2 bg-transparent hover:bg-gray-200 transition text-gray-500 text-xs group"
               aria-label="Augmenter la taille du texte"
               title="Augmenter la taille du texte"
             >
-              <Icon name="fas fa-plus" className="text-sm" />
+              <Icon name="fas fa-plus" className="text-base group-hover:text-primary cursor-pointer transition-colors" />
             </button>
             {/* Bouton Edit en fullscreen */}
             {editable && !isEditing && (
               <button
                 onClick={() => { setIsEditing(true); setEditedCode(code || ""); }}
-                className="p-1.5 mr-2 bg-slate-700 text-slate-300 hover:bg-yellow-100 hover:text-yellow-700 transition text-xs"
+                className="p-1.5 mr-2 bg-transparent text-slate-300 hover:bg-yellow-100 hover:text-yellow-700 transition text-xs"
                 aria-label="Edit code"
                 title="Edit"
               >
-                <Icon name="fas fa-pen" className="text-sm" />
+                <Icon name="fas fa-pen" className="text-base cursor-pointer transition-colors group-hover:text-primary" />
               </button>
             )}
             {isEditing && (
               <button
                 onClick={handleEditToggle}
-                className="p-1.5 mr-2 bg-slate-700 text-slate-300 hover:bg-green-100 hover:text-green-700 transition text-xs"
+                className="p-1.5 mr-2 hover:bg-green-200 transition text-slate-300 text-xs"
                 aria-label="Save code"
                 title="Save"
               >
-                <Icon name="fas fa-check" className="text-sm" />
+                <Icon name="fas fa-check" className="text-base cursor-pointer transition-colors group-hover:text-green-600" />
               </button>
             )}
             {isEditing && (
               <button
                 onClick={() => setIsEditing(false)}
-                className="p-1.5 mr-2 bg-gray-100 text-gray-600 hover:bg-red-200 hover:text-red-600 transition text-xs"
+                className="p-1.5 mr-2 bg-transparent text-gray-600 hover:bg-red-200 hover:text-red-600 transition text-xs"
                 aria-label="Cancel editing"
                 title="Cancel"
               >
-                <Icon name="fas fa-times" className="text-sm" />
+                <Icon name="fas fa-times" className="text-base group-hover:text-red-500 cursor-pointer transition-colors" />
               </button>
             )}
             <button
               onClick={handleCopy}
               disabled={!code || isLoading}
-              className="p-1.5 mr-2 bg-slate-700 hover:bg-slate-600 transition text-slate-300 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+              className="p-1.5 mr-2 bg-transparent hover:bg-slate-600 transition text-slate-300 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed text-xs"
               aria-label="Copy code"
             >
               <Icon name={copied ? "fas fa-check" : "fas fa-copy"} className={`${copied ? "text-green-400" : ""} text-sm`} />
@@ -178,14 +179,14 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
             <button
               onClick={handleDownload}
               disabled={!code || isLoading}
-              className="p-1.5 mr-2 bg-slate-700 hover:bg-slate-600 transition text-slate-300 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+              className="p-1.5 mr-2 bg-transparent hover:bg-slate-600 transition text-slate-300 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed text-xs"
               aria-label="Download code"
             >
               <Icon name="fas fa-download" className="text-sm" />
             </button>
             <button
               onClick={onToggleFullscreen}
-              className="p-1.5 bg-slate-700 hover:bg-slate-600 transition text-slate-300 hover:text-white text-xs"
+              className="p-1.5 bg-transparent hover:bg-slate-600 transition text-slate-300 hover:text-white text-xs"
               aria-label="Exit fullscreen"
             >
               <Icon name="fas fa-compress" className="text-sm"/>
@@ -198,12 +199,12 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
             <CodeMirror
               value={editedCode}
               height="100%"
-              theme="dark"
+              theme={githubDark}
               extensions={[htmlLang()]}
               onChange={(value: string) => setEditedCode(value)}
               basicSetup={{ lineNumbers: true, autocompletion: true }}
-              className="flex-1 w-full bg-slate-900 text-slate-200 font-mono border border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary mb-2 github-dark-theme custom-scrollbar scrollbar-blue-theme codemirror-scrollbar-thin"
-              style={{ minHeight: 0, height: '100%', fontSize: '0.85rem', lineHeight: '1.3', background: '#0f172a', color: '#e0e7ff' }}
+              className="flex-1 w-full font-mono border border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary mb-2 custom-scrollbar scrollbar-blue-theme codemirror-scrollbar-thin"
+              style={{ minHeight: 0, height: '100%', fontSize: '0.85rem', lineHeight: '1.3' }}
               autoFocus
             />
           ) : (
@@ -222,39 +223,39 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
           {/* Contrôles de taille de police */}
           <button
             onClick={handleDecreaseFont}
-            className="p-1.5 mr-1 bg-gray-100 hover:bg-gray-200 transition text-gray-500 text-xs"
+            className="p-1.5 mr-1 bg-transparent hover:bg-gray-200 transition text-gray-500 text-xs group"
             aria-label="Réduire la taille du texte"
             title="Réduire la taille du texte"
           >
-            <Icon name="fas fa-minus" className="text-sm" />
+            <Icon name="fas fa-minus" className="text-base group-hover:text-primary cursor-pointer transition-colors" />
           </button>
           <button
             onClick={handleIncreaseFont}
-            className="p-1.5 mr-2 bg-gray-100 hover:bg-gray-200 transition text-gray-500 text-xs"
+            className="p-1.5 mr-2 bg-transparent hover:bg-gray-200 transition text-gray-500 text-xs group"
             aria-label="Augmenter la taille du texte"
             title="Augmenter la taille du texte"
           >
-            <Icon name="fas fa-plus" className="text-sm" />
+            <Icon name="fas fa-plus" className="text-base group-hover:text-primary cursor-pointer transition-colors" />
           </button>
           {/* Bouton Edit à côté de Copy, une seule fois */}
           {editable && (
             <>
               <button
                 onClick={handleEditToggle}
-                className={`p-1.5 mr-2 bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-700 transition text-xs`}
+                className={`p-1.5 mr-2 bg-transparent ${isEditing ? 'hover:bg-green-200' : ''} text-gray-600 transition text-xs group`}
                 aria-label={isEditing ? 'Save code' : 'Edit code'}
                 title={isEditing ? 'Save' : 'Edit'}
               >
-                <Icon name={isEditing ? 'fas fa-check' : 'fas fa-pen'} className={`text-sm`} />
+                <Icon name={isEditing ? 'fas fa-check' : 'fas fa-pen'} className={`text-base cursor-pointer transition-colors ${isEditing ? 'text-green-700 group-hover:text-green-800' : 'group-hover:text-primary'}`} />
               </button>
               {isEditing && (
                 <button
                   onClick={() => setIsEditing(false)}
-                  className="p-1.5 mr-2 bg-gray-100 text-gray-600 hover:bg-red-200 hover:text-red-600 transition text-xs"
+                  className="p-1.5 mr-2 bg-transparent hover:bg-red-200 text-gray-600 hover:text-red-600 transition text-xs group"
                   aria-label="Cancel editing"
                   title="Cancel"
                 >
-                  <Icon name="fas fa-times" className="text-sm" />
+                  <Icon name="fas fa-times" className="text-base group-hover:text-red-500 cursor-pointer transition-colors" />
                 </button>
               )}
             </>
@@ -262,7 +263,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
           <button
             onClick={handleCopy}
             disabled={!code || isLoading}
-            className="p-1.5 mr-2 bg-gray-100 hover:bg-gray-200 transition text-gray-500 hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+            className="p-1.5 mr-2 bg-transparent  transition text-gray-500 hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed text-xs"
             aria-label="Copy code"
           >
             <Icon name={copied ? "fas fa-check" : "fas fa-copy"} className={`${copied ? "text-green-500" : ""} text-sm`} />
@@ -270,14 +271,14 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
           <button
             onClick={handleDownload}
             disabled={!code || isLoading}
-            className="p-1.5 mr-2 bg-gray-100 hover:bg-gray-200 transition text-gray-500 hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+            className="p-1.5 mr-2 bg-transparent  transition text-gray-500 hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed text-xs"
             aria-label="Download code"
           >
             <Icon name="fas fa-download" className="text-sm" />
           </button>
           <button
             onClick={onToggleFullscreen}
-            className="p-1.5 bg-gray-100 hover:bg-gray-200 transition text-gray-500 hover:text-primary text-xs"
+            className="p-1.5 bg-transparent  transition text-gray-500 hover:text-primary text-xs"
             aria-label="Enter fullscreen"
           >
             <Icon name="fas fa-expand" className="text-sm"/>
@@ -289,12 +290,12 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
           <CodeMirror
             value={editedCode}
             height="100%"
-            theme="dark"
+            theme={githubDark}
             extensions={[htmlLang()]}
             onChange={(value: string) => setEditedCode(value)}
             basicSetup={{ lineNumbers: true, autocompletion: true }}
-            className="flex-1 w-full bg-slate-900 text-slate-200 font-mono border border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary mb-2 github-dark-theme custom-scrollbar scrollbar-blue-theme codemirror-scrollbar-thin"
-            style={{ minHeight: 0, height: '100%', fontSize: fontSize, lineHeight: '1.5', background: '#0f172a', color: '#e0e7ff' }}
+            className="flex-1 w-full font-mono border border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary mb-2 custom-scrollbar scrollbar-blue-theme codemirror-scrollbar-thin"
+            style={{ minHeight: 0, height: '100%', fontSize: fontSize, lineHeight: '1.5', background: '#0f172a' }}
             autoFocus
           />
         ) : (

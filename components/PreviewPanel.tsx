@@ -32,7 +32,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ htmlContent, isFullscreen, 
       <div className={viewAreaClasses}>
          <button
           onClick={onToggleFullscreen}
-          className="absolute top-4 right-4 z-[101] p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition text-gray-600 hover:text-primary"
+          className="absolute top-4 right-4 z-[101] p-2 rounded-lg bg-transparent hover:bg-gray-200 transition text-gray-600 hover:text-primary"
           aria-label="Exit fullscreen"
         >
           <Icon name="fas fa-compress" />
@@ -51,7 +51,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ htmlContent, isFullscreen, 
         <h3 className="font-semibold text-base text-gray-800">Preview</h3>
         <button
           onClick={onToggleFullscreen}
-          className="p-1.5 bg-gray-100 hover:bg-gray-200 transition text-gray-500 hover:text-primary text-xs"
+          className="p-1.5 bg-transparent hover:bg-gray-200 transition text-gray-500 hover:text-primary text-xs"
           aria-label="Enter fullscreen"
         >
           <Icon name="fas fa-expand" />
