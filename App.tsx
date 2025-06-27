@@ -398,6 +398,8 @@ const App: React.FC = () => {
                     isLoading={isLoading && !generatedCodeForDisplay}
                     isFullscreen={isCodeFullscreen}
                     onToggleFullscreen={() => setIsCodeFullscreen(!isCodeFullscreen)}
+                    editable={true}
+                    onCodeChange={setGeneratedCodeForDisplay}
                   />
                 </Suspense>
               ) : (

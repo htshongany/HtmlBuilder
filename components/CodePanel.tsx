@@ -2,23 +2,31 @@ import React, { useState, useEffect } from 'react';
 import Icon from './Icon';
 import hljs from 'highlight.js/lib/core';
 import html from 'highlight.js/lib/languages/xml';
+import CodeMirror from '@uiw/react-codemirror';
+import { html as htmlLang } from '@codemirror/lang-html';
 // @ts-ignore
 import 'highlight.js/styles/github-dark.css';
+import '../custom-scrollbar.css'; // Ajout du style scrollbar globalement
 
 hljs.registerLanguage('html', html);
 
 interface CodePanelProps {
   code: string | null;
   isLoading: boolean;
-  className?: string; // Added className prop
+  className?: string;
   isFullscreen: boolean;
   onToggleFullscreen: () => void;
+  editable?: boolean; // Ajout prop pour activer l'édition
+  onCodeChange?: (newCode: string) => void; // Callback pour notifier le parent
 }
 
-const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFullscreen, onToggleFullscreen }) => {
+const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFullscreen, onToggleFullscreen, editable = false, onCodeChange }) => {
   const [copied, setCopied] = useState(false);
   const [highlighted, setHighlighted] = useState<string | null>(null);
   const [dotStep, setDotStep] = useState(0);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedCode, setEditedCode] = useState<string>("");
+  const [fontSize, setFontSize] = useState(14); // Taille de police par défaut raisonnable
 
   useEffect(() => {
     if (isLoading) {
@@ -90,12 +98,75 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
 
   const viewAreaBaseClasses = "code-block-container flex-grow overflow-hidden"; // Ensure pre can scroll within this
 
+  const handleEditToggle = () => {
+    if (isEditing) {
+      // Save
+      setIsEditing(false);
+      if (onCodeChange) onCodeChange(editedCode);
+    } else {
+      // Enter edit mode
+      setIsEditing(true);
+      setEditedCode(code || "");
+    }
+  };
+
+  const handleIncreaseFont = () => setFontSize((size) => Math.min(size + 2, 32));
+  const handleDecreaseFont = () => setFontSize((size) => Math.max(size - 2, 10));
+
   if (isFullscreen) {
     return (
       <div className="fixed inset-0 z-[100] bg-slate-900 flex flex-col p-4">
         <div className="flex justify-between items-center mb-2 pb-2 border-b border-slate-700">
           <h3 className="font-semibold text-base text-slate-200">Generated Code</h3>
           <div>
+            {/* Contrôles de taille de police en fullscreen */}
+            <button
+              onClick={handleDecreaseFont}
+              className="p-1.5 mr-1 rounded-md bg-slate-700 hover:bg-slate-600 transition text-slate-300 text-xs"
+              aria-label="Réduire la taille du texte"
+              title="Réduire la taille du texte"
+            >
+              <Icon name="fas fa-minus" className="text-sm" />
+            </button>
+            <button
+              onClick={handleIncreaseFont}
+              className="p-1.5 mr-2 rounded-md bg-slate-700 hover:bg-slate-600 transition text-slate-300 text-xs"
+              aria-label="Augmenter la taille du texte"
+              title="Augmenter la taille du texte"
+            >
+              <Icon name="fas fa-plus" className="text-sm" />
+            </button>
+            {/* Bouton Edit en fullscreen */}
+            {editable && !isEditing && (
+              <button
+                onClick={() => { setIsEditing(true); setEditedCode(code || ""); }}
+                className="p-1.5 mr-2 rounded-md bg-slate-700 text-slate-300 hover:bg-yellow-100 hover:text-yellow-700 transition text-xs"
+                aria-label="Edit code"
+                title="Edit"
+              >
+                <Icon name="fas fa-pen" className="text-sm" />
+              </button>
+            )}
+            {isEditing && (
+              <button
+                onClick={handleEditToggle}
+                className="p-1.5 mr-2 rounded-md bg-slate-700 text-slate-300 hover:bg-green-100 hover:text-green-700 transition text-xs"
+                aria-label="Save code"
+                title="Save"
+              >
+                <Icon name="fas fa-check" className="text-sm" />
+              </button>
+            )}
+            {isEditing && (
+              <button
+                onClick={() => setIsEditing(false)}
+                className="p-1.5 mr-2 rounded-md bg-gray-100 text-gray-600 hover:bg-red-200 hover:text-red-600 transition text-xs"
+                aria-label="Cancel editing"
+                title="Cancel"
+              >
+                <Icon name="fas fa-times" className="text-sm" />
+              </button>
+            )}
             <button
               onClick={handleCopy}
               disabled={!code || isLoading}
@@ -121,16 +192,73 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
             </button>
           </div>
         </div>
-        <pre className="h-full overflow-auto text-sm"><code className="language-html text-slate-200" dangerouslySetInnerHTML={{ __html: highlighted || codeToDisplay }} /></pre>
+        {/* Mode édition en fullscreen */}
+        <div className="flex-1 flex flex-col min-h-0 custom-scrollbar scrollbar-blue-theme" style={{ background: '#0f172a', color: '#e0e7ff' }}>
+          {isEditing ? (
+            <CodeMirror
+              value={editedCode}
+              height="100%"
+              theme="dark"
+              extensions={[htmlLang()]}
+              onChange={(value: string) => setEditedCode(value)}
+              basicSetup={{ lineNumbers: true, autocompletion: true }}
+              className="flex-1 w-full bg-slate-900 text-slate-200 rounded font-mono border border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary mb-2 github-dark-theme custom-scrollbar scrollbar-blue-theme codemirror-scrollbar-thin"
+              style={{ minHeight: 0, height: '100%', fontSize: '0.85rem', lineHeight: '1.3', background: '#0f172a', color: '#e0e7ff' }}
+              autoFocus
+            />
+          ) : (
+            <pre className="h-full overflow-auto p-3 text-xs flex-1 custom-scrollbar scrollbar-blue-theme" style={{ background: '#0f172a', color: '#e0e7ff' }}><code className="language-html text-slate-200" dangerouslySetInnerHTML={{ __html: highlighted || codeToDisplay }} /></pre>
+          )}
+        </div>
       </div>
     );
   }
   
   return (
-    <div className={`${className || ''} ${panelBaseClasses}`}>
-      <div className="flex justify-between items-center mb-2 p-2"> {/* Panel header in normal view */}
+    <div className={`${className || ''} ${panelBaseClasses}`} style={{ minHeight: 0 }}>
+      <div className="flex justify-between items-center mb-2 p-2">
         <h3 className="font-semibold text-base text-gray-800">Code (HTML & Tailwind)</h3>
         <div>
+          {/* Contrôles de taille de police */}
+          <button
+            onClick={handleDecreaseFont}
+            className="p-1.5 mr-1 rounded-md bg-gray-100 hover:bg-gray-200 transition text-gray-500 text-xs"
+            aria-label="Réduire la taille du texte"
+            title="Réduire la taille du texte"
+          >
+            <Icon name="fas fa-minus" className="text-sm" />
+          </button>
+          <button
+            onClick={handleIncreaseFont}
+            className="p-1.5 mr-2 rounded-md bg-gray-100 hover:bg-gray-200 transition text-gray-500 text-xs"
+            aria-label="Augmenter la taille du texte"
+            title="Augmenter la taille du texte"
+          >
+            <Icon name="fas fa-plus" className="text-sm" />
+          </button>
+          {/* Bouton Edit à côté de Copy, une seule fois */}
+          {editable && (
+            <>
+              <button
+                onClick={handleEditToggle}
+                className={`p-1.5 mr-2 rounded-md bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-700 transition text-xs`}
+                aria-label={isEditing ? 'Save code' : 'Edit code'}
+                title={isEditing ? 'Save' : 'Edit'}
+              >
+                <Icon name={isEditing ? 'fas fa-check' : 'fas fa-pen'} className={`text-sm`} />
+              </button>
+              {isEditing && (
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="p-1.5 mr-2 rounded-md bg-gray-100 text-gray-600 hover:bg-red-200 hover:text-red-600 transition text-xs"
+                  aria-label="Cancel editing"
+                  title="Cancel"
+                >
+                  <Icon name="fas fa-times" className="text-sm" />
+                </button>
+              )}
+            </>
+          )}
           <button
             onClick={handleCopy}
             disabled={!code || isLoading}
@@ -156,8 +284,24 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
           </button>
         </div>
       </div>
-      <div className={`${viewAreaBaseClasses} bg-slate-800 rounded-xl`}>
-         <pre className="h-full overflow-auto p-3 text-sm"><code className="language-html text-slate-200" dangerouslySetInnerHTML={{ __html: highlighted || codeToDisplay }} /></pre>
+      <div className={`${viewAreaBaseClasses} bg-slate-900 rounded-xl flex-1 flex flex-col min-h-0 custom-scrollbar scrollbar-blue-theme`} style={{ color: '#e0e7ff', background: '#0f172a' }}> 
+        {isEditing ? (
+          <CodeMirror
+            value={editedCode}
+            height="100%"
+            theme="dark"
+            extensions={[htmlLang()]}
+            onChange={(value: string) => setEditedCode(value)}
+            basicSetup={{ lineNumbers: true, autocompletion: true }}
+            className="flex-1 w-full bg-slate-900 text-slate-200 rounded font-mono border border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary mb-2 github-dark-theme custom-scrollbar scrollbar-blue-theme codemirror-scrollbar-thin"
+            style={{ minHeight: 0, height: '100%', fontSize: fontSize, lineHeight: '1.5', background: '#0f172a', color: '#e0e7ff' }}
+            autoFocus
+          />
+        ) : (
+          <pre className="h-full overflow-auto p-3 flex-1 custom-scrollbar scrollbar-blue-theme" style={{ background: '#0f172a', color: '#e0e7ff', scrollbarColor: '#6366f1 #0f172a', fontSize: fontSize, lineHeight: '1.5' }}>
+            <code className="language-html text-slate-200" style={{ background: 'transparent', color: '#e0e7ff', fontSize: fontSize, lineHeight: '1.5' }} dangerouslySetInnerHTML={{ __html: highlighted || codeToDisplay }} />
+          </pre>
+        )}
       </div>
     </div>
   );
