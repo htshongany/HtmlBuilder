@@ -406,7 +406,11 @@ const App: React.FC = () => {
                 <Suspense fallback={<div className="flex items-center justify-center h-full text-gray-400">Chargement de l'aperçu...</div>}>
                   <PreviewPanel 
                     className="absolute inset-0"
-                    htmlContent={generatedHtml}
+                    htmlContent={
+                      generatedCodeForDisplay && generatedCodeForDisplay !== generatedHtml
+                        ? generatedCodeForDisplay
+                        : generatedHtml
+                    }
                     isFullscreen={isPreviewFullscreen}
                     onToggleFullscreen={() => setIsPreviewFullscreen(!isPreviewFullscreen)}
                     isLoading={isLoading && !generatedHtml}

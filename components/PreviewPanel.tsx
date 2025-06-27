@@ -24,7 +24,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ htmlContent, isFullscreen, 
   // Fullscreen takes over the screen
   const viewAreaClasses = isFullscreen
     ? "fixed inset-0 z-[100] bg-white p-4 overflow-auto custom-scrollbar"
-    : "preview-container-bg rounded-xl border border-gray-200 flex-grow overflow-auto custom-scrollbar p-2 md:p-4";
+    : "preview-container-bg border border-gray-200 flex-grow overflow-auto custom-scrollbar p-2 md:p-4";
 
 
   if (isFullscreen) {
@@ -51,7 +51,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ htmlContent, isFullscreen, 
         <h3 className="font-semibold text-base text-gray-800">Preview</h3>
         <button
           onClick={onToggleFullscreen}
-          className="p-1.5 rounded-md bg-gray-100 hover:bg-gray-200 transition text-gray-500 hover:text-primary text-xs"
+          className="p-1.5 bg-gray-100 hover:bg-gray-200 transition text-gray-500 hover:text-primary text-xs"
           aria-label="Enter fullscreen"
         >
           <Icon name="fas fa-expand" />
