@@ -75,14 +75,4 @@ export const SAMPLE_HTML_PREVIEW = `
 </div>
 `;
 
-export const SAMPLE_GENERATED_CODE = `<!-- Generated HTML will appear here -->
-<div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden my-4">
-  <div class="p-8">
-    <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Example Component</div>
-    <h2 class="mt-2 text-2xl font-bold text-gray-800">Sample Card</h2>
-    <p class="mt-2 text-gray-500">This is a placeholder for AI-generated content.</p>
-    <button class="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-lg font-medium transition">
-      Example Button
-    </button>
-  </div>
-</div>`;
+export const SAMPLE_GENERATED_CODE = ``;
