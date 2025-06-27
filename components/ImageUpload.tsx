@@ -128,11 +128,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect, imagePreviewUr
           onChange={onFileInputChange}
         />
         {imagePreviewUrl ? (
-          <div className="flex flex-col items-center justify-center text-center p-2 h-full">
-            <img src={imagePreviewUrl} alt="Preview" className="max-h-28 object-contain rounded mb-2" />
+          <div className="relative flex flex-col items-center justify-center text-center p-2 h-full w-full">
+            <img src={imagePreviewUrl} alt="Preview" className="max-h-40 w-full object-contain rounded mb-2" />
             <button 
                 onClick={(e) => { e.stopPropagation(); handleRemoveImage(); }} 
-                className="mt-1 text-red-500 hover:text-red-700 text-xl" aria-label="Remove image"
+                className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl z-10" aria-label="Remove image"
             >
                 <Icon name="fas fa-trash" />
             </button>
