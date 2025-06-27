@@ -10,12 +10,12 @@ interface PreviewPanelProps {
 }
 
 const PreviewPanel: React.FC<PreviewPanelProps> = ({ htmlContent, isFullscreen, onToggleFullscreen, isLoading, className }) => {
-  const contentToRender = isLoading ? 
-    `<div class="flex flex-col items-center justify-center h-full text-gray-500 p-4">
-       <i class="fas fa-spinner fa-spin text-4xl mb-3 text-primary animate-spin"></i>
-       <p class="text-lg animate-pulse">Generating preview...</p>
-     </div>` 
-    : (htmlContent || '');
+  const contentToRender = isLoading
+    ? `<div class="flex flex-col items-center justify-center h-full text-gray-500 p-4">
+         <i class="fas fa-spinner fa-spin text-4xl mb-3 text-primary animate-spin"></i>
+         <p class="text-lg animate-pulse">Generating preview...</p>
+       </div>`
+    : (!htmlContent || htmlContent.trim() === '' ? 'rien' : htmlContent);
 
   // Base classes for the panel itself (when not fullscreen)
   const panelBaseClasses = "flex flex-col h-full";

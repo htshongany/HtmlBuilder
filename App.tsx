@@ -400,6 +400,8 @@ const App: React.FC = () => {
                     onToggleFullscreen={() => setIsCodeFullscreen(!isCodeFullscreen)}
                     editable={true}
                     onCodeChange={setGeneratedCodeForDisplay}
+                    onRestore={() => setGeneratedCodeForDisplay(generatedHtml || '')}
+                    canRestore={!!generatedHtml && generatedCodeForDisplay !== generatedHtml}
                   />
                 </Suspense>
               ) : (

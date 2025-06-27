@@ -19,9 +19,11 @@ interface CodePanelProps {
   onToggleFullscreen: () => void;
   editable?: boolean; // Ajout prop pour activer l'édition
   onCodeChange?: (newCode: string) => void; // Callback pour notifier le parent
+  onRestore?: () => void; // Ajout prop pour restaurer le code généré
+  canRestore?: boolean; // Affiche le bouton Restore si true
 }
 
-const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFullscreen, onToggleFullscreen, editable = false, onCodeChange }) => {
+const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFullscreen, onToggleFullscreen, editable = false, onCodeChange, onRestore, canRestore }) => {
   const [copied, setCopied] = useState(false);
   const [highlighted, setHighlighted] = useState<string | null>(null);
   const [dotStep, setDotStep] = useState(0);
@@ -123,7 +125,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
             {/* Contrôles de taille de police en fullscreen */}
             <button
               onClick={handleDecreaseFont}
-              className="p-1.5 mr-1 bg-transparent hover:bg-gray-200 transition text-gray-500 text-xs group"
+              className="p-1.5 mr-1 bg-transparent hover:bg-slate-600 transition text-slate-300 hover:text-white text-xs group"
               aria-label="Réduire la taille du texte"
               title="Réduire la taille du texte"
             >
@@ -131,7 +133,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
             </button>
             <button
               onClick={handleIncreaseFont}
-              className="p-1.5 mr-2 bg-transparent hover:bg-gray-200 transition text-gray-500 text-xs group"
+              className="p-1.5 mr-2 bg-transparent hover:bg-slate-600 transition text-slate-300 hover:text-white text-xs group"
               aria-label="Augmenter la taille du texte"
               title="Augmenter la taille du texte"
             >
@@ -184,6 +186,16 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
             >
               <Icon name="fas fa-download" className="text-sm" />
             </button>
+            {canRestore && onRestore && (
+              <button
+                onClick={onRestore}
+                className="p-1.5 mr-2 bg-transparent hover:bg-slate-600 transition text-slate-300 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+                aria-label="Restaurer le code généré"
+                title="Restaurer le code généré par l'IA"
+              >
+                <Icon name="fas fa-undo" className="text-sm" />
+              </button>
+            )}
             <button
               onClick={onToggleFullscreen}
               className="p-1.5 bg-transparent hover:bg-slate-600 transition text-slate-300 hover:text-white text-xs"
@@ -204,11 +216,11 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
               onChange={(value: string) => setEditedCode(value)}
               basicSetup={{ lineNumbers: true, autocompletion: true }}
               className="flex-1 w-full font-mono border border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary mb-2 custom-scrollbar scrollbar-blue-theme codemirror-scrollbar-thin"
-              style={{ minHeight: 0, height: '100%', fontSize: '0.85rem', lineHeight: '1.3' }}
+              style={{ minHeight: 0, height: '100%', fontSize: fontSize, lineHeight: '1.3' }}
               autoFocus
             />
           ) : (
-            <pre className="h-full overflow-auto p-3 text-xs flex-1 custom-scrollbar scrollbar-blue-theme" style={{ background: '#0f172a', color: '#e0e7ff' }}><code className="language-html text-slate-200" dangerouslySetInnerHTML={{ __html: highlighted || codeToDisplay }} /></pre>
+            <pre className="h-full overflow-auto p-3 text-xs flex-1 custom-scrollbar scrollbar-blue-theme" style={{ background: '#0f172a', color: '#e0e7ff', fontSize: fontSize, lineHeight: '1.3' }}><code className="language-html text-slate-200" dangerouslySetInnerHTML={{ __html: highlighted || codeToDisplay }} /></pre>
           )}
         </div>
       </div>
@@ -276,6 +288,16 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
           >
             <Icon name="fas fa-download" className="text-sm" />
           </button>
+          {canRestore && onRestore && (
+            <button
+              onClick={onRestore}
+              className="p-1.5 mr-2 bg-transparent hover:bg-slate-600 transition text-slate-300 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+              aria-label="Restaurer le code généré"
+              title="Restaurer le code généré par l'IA"
+            >
+              <Icon name="fas fa-undo" className="text-sm" />
+            </button>
+          )}
           <button
             onClick={onToggleFullscreen}
             className="p-1.5 bg-transparent  transition text-gray-500 hover:text-primary text-xs"
