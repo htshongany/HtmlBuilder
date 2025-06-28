@@ -2,14 +2,6 @@ import { GoogleGenAI, GenerateContentResponse, Part } from "@google/genai";
 import { GenerationParams, GroundingChunk } from '../types';
 import { GEMINI_MODEL_TEXT } from '../constants';
 
-const API_KEY = process.env.API_KEY;
-
-if (!API_KEY) {
-  console.error("API_KEY environment variable is not set. Please ensure it is configured.");
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY || "MISSING_API_KEY" });
-
 function buildPrompt(params: GenerationParams): string {
   let prompt = `You are an expert AI assistant that generates clean, responsive HTML code with Tailwind CSS classes.
 Based on the provided image and the following user specifications, generate the HTML code for the requested component or page.
@@ -37,11 +29,13 @@ Generate the HTML code block (and a single <script> tag if JavaScript is request
 
 export const generateHtmlFromImage = async (
   params: GenerationParams,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  apiKey?: string
 ): Promise<{html: string, sources: GroundingChunk[] | null}> => {
-  if (!API_KEY) {
+  if (!apiKey) {
     throw new Error("API_KEY is not configured. Cannot call Gemini API.");
   }
+  const ai = new GoogleGenAI({ apiKey });
 
   const imagePart: Part = {
     inlineData: {

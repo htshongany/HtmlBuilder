@@ -8,6 +8,8 @@ import {
   SAMPLE_HTML_PREVIEW, SAMPLE_GENERATED_CODE
 } from './constants';
 import './css/custom-scrollbar.css';
+import ApiKeyMenuIcon from './components/ApiKeyMenuIcon';
+import { useApiKeyValue } from './hooks/useApiKeyValue';
 
 // Remplacer les imports directs par du lazy loading
 const Icon = lazy(() => import('./components/Icon'));
@@ -60,6 +62,8 @@ const App: React.FC = () => {
 
   // Nouvel état pour contrôler la visibilité du panneau de configuration
   const [showConfigPanel, setShowConfigPanel] = useState(true);
+
+  const apiKey = useApiKeyValue();
 
   useEffect(() => {
     if (uploadOption === UploadOption.Basic) {
@@ -132,7 +136,7 @@ const App: React.FC = () => {
     abortControllerRef.current = abortController;
 
     try {
-      const {html} = await generateHtmlFromImage(generationParams, abortController.signal);
+      const {html} = await generateHtmlFromImage(generationParams, abortController.signal, apiKey || undefined);
       if (isStopped) return;
       setGeneratedHtml(html);
       setGeneratedCodeForDisplay(html); 
@@ -154,6 +158,7 @@ const App: React.FC = () => {
           <h1 className="text-xl font-bold text-gray-800 flex items-center">
             <Icon name="fas fa-palette" className="text-primary mr-2" /> 
             AI HtmlBuilder
+            <ApiKeyMenuIcon />
           </h1>
           <div className="flex items-center gap-2">
             {/* Bouton de thème supprimé */}
