@@ -54,11 +54,18 @@ const ApiKeyMenuIcon: React.FC = () => {
     setLocalError(null);
     const ok = await setUserApiKey(input);
     if (ok) {
-      setShowModal(false);
       setInput('');
+      // Ne pas fermer la popup, l'UI va afficher l'état "clé enregistrée"
     } else {
       setLocalError('Clé API invalide.');
     }
+  };
+
+  const handleRemove = () => {
+    removeUserApiKey();
+    setInput('');
+    setLocalError(null);
+    // Ne pas fermer la popup, l'UI va afficher le formulaire
   };
 
   return (
@@ -97,10 +104,10 @@ const ApiKeyMenuIcon: React.FC = () => {
                       <button
                         className="flex-1 bg-gray-100 text-gray-700 rounded-lg px-3 py-2 hover:bg-gray-200 border border-gray-200 transition-colors"
                         onClick={() => setShowModal(false)}
-                      >Annuler</button>
+                      >Fermer</button>
                       <button
                         className="flex-1 bg-red-50 text-red-700 rounded-lg px-3 py-2 hover:bg-red-100 border border-red-200 transition-colors"
-                        onClick={() => { removeUserApiKey(); setInput(''); setShowModal(false); }}
+                        onClick={handleRemove}
                       >Supprimer</button>
                     </div>
                   </div>

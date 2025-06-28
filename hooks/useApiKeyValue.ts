@@ -7,10 +7,17 @@ export function useApiKeyValue() {
   const [apiKey, setApiKey] = useState<string | null>(null);
   useEffect(() => {
     let mounted = true;
-    apiKeyService.getValidApiKey().then(key => {
-      if (mounted) setApiKey(key);
-    });
-    return () => { mounted = false; };
+    const updateKey = () => {
+      apiKeyService.getValidApiKey().then(key => {
+        if (mounted) setApiKey(key);
+      });
+    };
+    updateKey();
+    window.addEventListener('apiKeyChanged', updateKey);
+    return () => {
+      mounted = false;
+      window.removeEventListener('apiKeyChanged', updateKey);
+    };
   }, []);
   return apiKey;
 }

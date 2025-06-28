@@ -99,6 +99,10 @@ async function getValidApiKey(): Promise<string | null> {
   return null;
 }
 
+function notifyApiKeyChanged() {
+  window.dispatchEvent(new Event('apiKeyChanged'));
+}
+
 async function storeUserApiKey(apiKey: string): Promise<boolean> {
   console.log('[clé avant chiffrement]', apiKey);
   const valid = await validateApiKey(apiKey);
@@ -115,12 +119,14 @@ async function storeUserApiKey(apiKey: string): Promise<boolean> {
     encrypted: localStorage.getItem(LOCAL_STORAGE_KEY),
     cryptoKey: localStorage.getItem(LOCAL_STORAGE_CRYPTO_KEY)
   });
+  notifyApiKeyChanged();
   return true;
 }
 
 function removeLocalApiKey() {
   localStorage.removeItem(LOCAL_STORAGE_KEY);
   localStorage.removeItem(LOCAL_STORAGE_CRYPTO_KEY);
+  notifyApiKeyChanged();
 }
 
 export const apiKeyService = {
