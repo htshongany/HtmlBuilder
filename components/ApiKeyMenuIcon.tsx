@@ -70,14 +70,28 @@ const ApiKeyMenuIcon: React.FC = () => {
 
   return (
     <>
-      <button
-        className={`ml-6 text-xl focus:outline-none transition-colors duration-150 ${hasValidApiKey ? 'text-green-600 hover:text-green-700' : 'text-gray-500 hover:text-primary'}`}
-        title={hasValidApiKey ? 'Clé API valide' : 'Configurer la clé API'}
-        onClick={() => setShowModal(true)}
-        style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-      >
-        <KeyIcon className="w-5 h-5" />
-      </button>
+      <div className="relative group" style={{ display: 'inline-block' }}>
+        <button
+          className={`ml-6 text-xl focus:outline-none transition-colors duration-150 ${hasValidApiKey ? 'text-green-600 hover:text-green-700' : 'text-gray-500 hover:text-primary'}`}
+          onClick={() => setShowModal(true)}
+          style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', pointerEvents: 'auto' }}
+        >
+          <KeyIcon className="w-5 h-5" />
+        </button>
+        {/* Custom tooltip (white background, black text) */}
+        <div className="hidden group-hover:block absolute left-8 top-1/2 -translate-y-1/2 bg-white border border-gray-300 rounded shadow-md px-4 py-2 text-xs text-gray-800 w-64 z-30 animate-fade-in pointer-events-none" style={{ minWidth: 180 }}>
+          <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-b-8 border-r-8 border-t-transparent border-b-transparent border-r-gray-300 border-l-0" />
+          {hasValidApiKey ? (
+            <span className="font-semibold text-gray-800">Your Gemini API key is valid.</span>
+          ) : (
+            <>
+              <span className="font-semibold text-gray-800">Configure your Gemini API key.</span>
+              <br />
+              <span>Required for code generation.</span>
+            </>
+          )}
+        </div>
+      </div>
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
           <div className="bg-white rounded-2xl shadow-xl p-0 w-full max-w-md relative border border-gray-200 animate-fade-in">

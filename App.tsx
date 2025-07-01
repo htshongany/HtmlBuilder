@@ -65,6 +65,30 @@ const App: React.FC = () => {
 
   const apiKey = useApiKeyValue();
 
+  const [flashError, setFlashError] = useState<{ text: string; apiKeyLink?: boolean } | null>(null);
+
+  const showFlashError = (msg: string) => {
+    let userMsg = msg;
+    let apiKeyLink = undefined;
+    try {
+      // Ex: Failed to generate HTML from image: {"error":{"code":503,...}}
+      const match = msg.match(/Failed to generate HTML from image: (\{.*\})/);
+      if (match && match[1]) {
+        const errObj = JSON.parse(match[1]);
+        if (errObj.error) {
+          userMsg = `Error ${errObj.error.code}: ${errObj.error.message}`;
+        }
+      }
+      // Cas API_KEY manquante
+      if (msg.includes('API_KEY is not configured')) {
+        userMsg = "Gemini API key is missing. Please generate one.";
+        apiKeyLink = true;
+      }
+    } catch {}
+    setFlashError({ text: userMsg, apiKeyLink });
+    setTimeout(() => setFlashError(null), 10000);
+  };
+
   useEffect(() => {
     if (uploadOption === UploadOption.Basic) {
       setCustomPrompt('');
@@ -143,9 +167,9 @@ const App: React.FC = () => {
     } catch (err) {
       if (isStopped) return;
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
-      setError(`Generation Failed: ${errorMessage}`);
-      setGeneratedHtml(`<div class="p-4 text-red-500 text-center">${errorMessage}</div>`);
-      setGeneratedCodeForDisplay(`// Error: ${errorMessage}`);
+      showFlashError(errorMessage);
+      setGeneratedHtml(null);
+      setGeneratedCodeForDisplay(null);
     } finally {
       if (!isStopped) setIsLoading(false);
     }
@@ -203,6 +227,32 @@ const App: React.FC = () => {
     <div
       className="flex flex-col h-screen bg-gray-50"
     >
+      {/* Flash error notification */}
+      {flashError && (
+        <div className="fixed top-0 left-0 w-full z-[200] flex justify-center animate-fade-in-out transition-all duration-300">
+          <div className="w-full max-w-2xl mx-auto bg-indigo-600 text-white px-6 py-4 rounded-b-lg shadow-lg flex items-center gap-3 border-b-4 border-indigo-800" style={{fontWeight: 500, fontSize: '1rem'}}>
+            <Icon name="fas fa-exclamation-triangle" className="text-white text-xl mr-2" />
+            <span className="flex-1 text-center">
+              {typeof flashError === 'string' ? flashError : flashError.text}
+              {flashError.apiKeyLink && (
+                <>
+                  <br />
+                  <a
+                    href="https://aistudio.google.com/apikey"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block mt-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded transition-colors duration-200 shadow"
+                    style={{ textDecoration: 'none' }}
+                  >
+                    Generate a Gemini API key
+                  </a>
+                </>
+              )}
+            </span>
+          </div>
+        </div>
+      )}
+      {/* Fin flash error */}
       <Suspense fallback={<div className="flex-1 flex items-center justify-center text-gray-400 text-lg">Chargement...</div>}>
         <Header />
         <main className="flex-1 flex overflow-hidden">

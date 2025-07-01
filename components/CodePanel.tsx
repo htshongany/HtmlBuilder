@@ -95,7 +95,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
   const animatedDots = ['.', '..', '...', '.'];
   const codeToDisplay = isLoading ? 
     `// Generating code${animatedDots[dotStep]}\n<div class=\"flex items-center justify-center h-full\">\n  <span class=\"animate-spin\"><i class=\"fas fa-spinner text-2xl text-indigo-300\"></i></span>\n</div>` 
-    : (code || '// No code generated yet.');
+    : (code && code.trim() !== '' ? code : null);
 
   const panelBaseClasses = "flex flex-col h-full";
 
@@ -219,8 +219,13 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
               style={{ minHeight: 0, height: '100%', fontSize: fontSize, lineHeight: '1.3' }}
               autoFocus
             />
-          ) : (
+          ) : codeToDisplay ? (
             <pre className="h-full overflow-auto p-3 text-xs flex-1 custom-scrollbar scrollbar-blue-theme" style={{ background: '#0f172a', color: '#e0e7ff', fontSize: fontSize, lineHeight: '1.3' }}><code className="language-html text-slate-200" dangerouslySetInnerHTML={{ __html: highlighted || codeToDisplay }} /></pre>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full w-full text-slate-400 opacity-80 select-none">
+              <Icon name="fas fa-palette" className="text-5xl mb-2" />
+              <span className="text-lg">No code generated yet.</span>
+            </div>
           )}
         </div>
       </div>
@@ -320,10 +325,15 @@ const CodePanel: React.FC<CodePanelProps> = ({ code, isLoading, className, isFul
             style={{ minHeight: 0, height: '100%', fontSize: fontSize, lineHeight: '1.5', background: '#0f172a' }}
             autoFocus
           />
-        ) : (
+        ) : codeToDisplay ? (
           <pre className="h-full overflow-auto p-3 flex-1 custom-scrollbar scrollbar-blue-theme" style={{ background: '#0f172a', color: '#e0e7ff', scrollbarColor: '#6366f1 #0f172a', fontSize: fontSize, lineHeight: '1.5' }}>
             <code className="language-html text-slate-200" style={{ background: 'transparent', color: '#e0e7ff', fontSize: fontSize, lineHeight: '1.5' }} dangerouslySetInnerHTML={{ __html: highlighted || codeToDisplay }} />
           </pre>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full w-full text-slate-400 opacity-80 select-none">
+            <Icon name="fas fa-palette" className="text-4xl mb-2" />
+            <span className="text-base">No code generated yet.</span>
+          </div>
         )}
       </div>
     </div>
