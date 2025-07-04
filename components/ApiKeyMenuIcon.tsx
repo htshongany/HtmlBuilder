@@ -72,6 +72,7 @@ const ApiKeyMenuIcon: React.FC = () => {
     <>
       <div className="relative group" style={{ display: 'inline-block' }}>
         <button
+          aria-label="Configurer la clé API Gemini"
           className={`ml-6 text-xl focus:outline-none transition-colors duration-150 ${hasValidApiKey ? 'text-green-600 hover:text-green-700' : 'text-gray-500 hover:text-primary'}`}
           onClick={() => setShowModal(true)}
           style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', pointerEvents: 'auto' }}

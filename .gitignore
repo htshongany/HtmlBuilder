@@ -24,9 +24,10 @@ dist-ssr
 *.sw?
 
 
-# Ignore rapport directory
+# Ignore these directories
 rapport/
 release/
+.lighthouseci/
 
 # extensions
 *.bat 
