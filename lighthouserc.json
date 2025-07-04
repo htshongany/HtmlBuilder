@@ -1,0 +1,15 @@
+{
+    "ci": {
+      "collect": {
+        "staticDistDir": "./dist"
+      },
+      "assert": {
+        "assertions": {
+          "color-contrast": ["error", { "minScore": 0.9 }],
+          "errors-in-console": ["error", { "minScore": 0.9 }],
+          "uses-text-compression": ["warn", { "maxLength": 1 }]
+        }
+      }
+    }
+}
+  

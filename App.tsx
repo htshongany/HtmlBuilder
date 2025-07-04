@@ -445,7 +445,8 @@ const App: React.FC = () => {
 
             {/* Results Content */}
             <div className="flex-1 relative overflow-hidden">
-              {isCodeViewActive ? (
+              {/* Les deux panels sont toujours montés, on affiche/cache avec display */}
+              <div style={{ display: isCodeViewActive ? 'block' : 'none', height: '100%' }}>
                 <Suspense fallback={<div className="flex items-center justify-center h-full text-gray-400">Chargement du code...</div>}>
                   <CodePanel 
                     className="absolute inset-0"
@@ -459,7 +460,8 @@ const App: React.FC = () => {
                     canRestore={!!generatedHtml && generatedCodeForDisplay !== generatedHtml}
                   />
                 </Suspense>
-              ) : (
+              </div>
+              <div style={{ display: !isCodeViewActive ? 'block' : 'none', height: '100%' }}>
                 <Suspense fallback={<div className="flex items-center justify-center h-full text-gray-400">Chargement de l'aperçu...</div>}>
                   <PreviewPanel 
                     className="absolute inset-0"
@@ -473,7 +475,7 @@ const App: React.FC = () => {
                     isLoading={isLoading && !generatedHtml}
                   />
                 </Suspense>
-              )}
+              </div>
             </div>
           </div>
 
