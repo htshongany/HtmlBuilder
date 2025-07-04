@@ -26,6 +26,7 @@ dist-ssr
 
 # Ignore rapport directory
 rapport/
+release/
 
 # extensions
 *.bat 
