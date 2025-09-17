@@ -16,6 +16,7 @@ const Icon = lazy(() => import('./components/Icon'));
 const ImageUpload = lazy(() => import('./components/ImageUpload'));
 const PreviewPanel = lazy(() => import('./components/PreviewPanel'));
 const CodePanel = lazy(() => import('./components/CodePanel'));
+const Documentation = lazy(() => import('./components/Documentation'));
 
 // Utilitaires pour localStorage
 const LOCAL_STORAGE_KEY = 'htmlbuilder_last_session';
@@ -37,11 +38,12 @@ function loadSessionFromLocalStorage() {
   }
 }
 
+type View = 'builder' | 'docs';
+
 const App: React.FC = () => {
   const sessionCache = loadSessionFromLocalStorage();
 
   const [uploadOption, setUploadOption] = useState<UploadOption>(sessionCache?.uploadOption ?? UploadOption.Basic);
-  // Correction image: on ne restaure que l'URL base64 pour l'aperçu, pas de File
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(sessionCache?.imagePreviewUrl ?? null);
   const [customPrompt, setCustomPrompt] = useState<string>(sessionCache?.customPrompt ?? '');
@@ -59,9 +61,9 @@ const App: React.FC = () => {
   const [isCodeViewActive, setIsCodeViewActive] = useState(false);
   const [isPreviewFullscreen, setIsPreviewFullscreen] = useState(false);
   const [isCodeFullscreen, setIsCodeFullscreen] = useState(false);
-
-  // Nouvel état pour contrôler la visibilité du panneau de configuration
   const [showConfigPanel, setShowConfigPanel] = useState(true);
+  
+  const [view, setView] = useState<View>('builder');
 
   const apiKey = useApiKeyValue();
 
@@ -71,7 +73,6 @@ const App: React.FC = () => {
     let userMsg = msg;
     let apiKeyLink = undefined;
     try {
-      // Ex: Failed to generate HTML from image: {"error":{"code":503,...}}
       const match = msg.match(/Failed to generate HTML from image: (\{.*\})/);
       if (match && match[1]) {
         const errObj = JSON.parse(match[1]);
@@ -79,12 +80,11 @@ const App: React.FC = () => {
           userMsg = `Error ${errObj.error.code}: ${errObj.error.message}`;
         }
       }
-      // Cas API_KEY manquante
       if (msg.includes('API_KEY is not configured')) {
         userMsg = "Gemini API key is missing. Please generate one.";
         apiKeyLink = true;
       }
-    } catch {}
+    } catch {} // eslint-disable-line no-empty
     setFlashError({ text: userMsg, apiKeyLink });
     setTimeout(() => setFlashError(null), 10000);
   };
@@ -100,7 +100,6 @@ const App: React.FC = () => {
     setImagePreviewUrl(dataUrl);
   }, []);
 
-  // Correction du reset : tout réinitialiser + effacer le cache
   const handleReset = () => {
     setUploadOption(UploadOption.CustomPrompt);
     setSelectedImageFile(null);
@@ -185,7 +184,6 @@ const App: React.FC = () => {
             <ApiKeyMenuIcon />
           </h1>
           <div className="flex items-center gap-2">
-            {/* Bouton de thème supprimé */}
             <button
               onClick={() => setShowConfigPanel(!showConfigPanel)}
               className="lg:hidden px-3 py-1.5 text-sm font-medium text-primary hover:bg-indigo-50 rounded-md transition-colors"
@@ -202,7 +200,6 @@ const App: React.FC = () => {
   const COMPONENTS_VISIBLE_INIT = 5;
   const [showAllComponents, setShowAllComponents] = useState(false);
 
-  // Sauvegarde automatique à chaque modification importante
   useEffect(() => {
     const session = {
       uploadOption,
@@ -223,17 +220,26 @@ const App: React.FC = () => {
     saveSessionToLocalStorage(session);
   }, [uploadOption, selectedImageFile, imagePreviewUrl, customPrompt, componentType, advancedOptions, generatedHtml, generatedCodeForDisplay, useCustomPrompt]);
 
+  if (view === 'docs') {
+    return (
+      <Suspense fallback={<div className="flex-1 flex items-center justify-center text-gray-400 text-lg">Loading...</div>}>
+        <Documentation onBack={() => setView('builder')} />
+      </Suspense>
+    );
+  }
+
   return (
-    <div
-      className="flex flex-col h-screen bg-gray-50"
-    >
-      {/* Flash error notification */}
+    <div className="flex flex-col h-screen bg-gray-50">
       {flashError && (
         <div className="fixed top-0 left-0 w-full z-[200] flex justify-center animate-fade-in-out transition-all duration-300">
-          <div className="w-full max-w-2xl mx-auto bg-indigo-600 text-white px-6 py-4 rounded-b-lg shadow-lg flex items-center gap-3 border-b-4 border-indigo-800" style={{fontWeight: 500, fontSize: '1rem'}}>
-            <Icon name="fas fa-exclamation-triangle" className="text-white text-xl mr-2" />
+          <div className={`w-full max-w-2xl mx-auto px-6 py-4 rounded-b-lg shadow-lg flex items-center gap-3 border-b-4 ${
+              flashError.apiKeyLink 
+                ? 'bg-yellow-400 border-yellow-600 text-yellow-900' 
+                : 'bg-indigo-600 text-white border-indigo-800'
+            }`} style={{fontWeight: 500, fontSize: '1rem'}}>
+            <Icon name="fas fa-exclamation-triangle" className="text-xl mr-2" />
             <span className="flex-1 text-center">
-              {typeof flashError === 'string' ? flashError : flashError.text}
+              {flashError.text}
               {flashError.apiKeyLink && (
                 <>
                   <br />
@@ -241,7 +247,7 @@ const App: React.FC = () => {
                     href="https://aistudio.google.com/apikey"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block mt-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded transition-colors duration-200 shadow"
+                    className="inline-block mt-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold rounded transition-colors duration-200 shadow"
                     style={{ textDecoration: 'none' }}
                   >
                     Generate a Gemini API key
@@ -252,22 +258,18 @@ const App: React.FC = () => {
           </div>
         </div>
       )}
-      {/* Fin flash error */}
-      <Suspense fallback={<div className="flex-1 flex items-center justify-center text-gray-400 text-lg">Chargement...</div>}>
+      <Suspense fallback={<div className="flex-1 flex items-center justify-center text-gray-400 text-lg">Loading...</div>}>
         <Header />
         <main className="flex-1 flex overflow-hidden">
-          {/* Configuration Panel - Collapsible on mobile, fixed on desktop */}
           <div className={
-            `${showConfigPanel ? 'block' : 'hidden'} \
-            lg:block lg:w-80 xl:w-96 \
-            absolute lg:relative z-40 lg:z-auto\
-            inset-0 lg:inset-auto\
+            `${showConfigPanel ? 'block' : 'hidden'} \ 
+            lg:block lg:w-80 xl:w-96 \ 
+            absolute lg:relative z-40 lg:z-auto\ 
+            inset-0 lg:inset-auto\ 
             bg-gray-50 lg:bg-transparent`
           }>
             <div className="h-full flex flex-col bg-gray-50 shadow-lg lg:shadow-none border-r border-gray-200">
-              {/* Scrollable Content */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-                {/* Upload Image Section */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-center my-2">
                     <div className="flex-grow h-px bg-gray-300" />
@@ -276,14 +278,13 @@ const App: React.FC = () => {
                   </div>
                   <div className="w-full flex justify-center">
                     <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
-                      <Suspense fallback={<div className="text-gray-400 text-center">Chargement du composant...</div>}>
+                      <Suspense fallback={<div className="text-gray-400 text-center">Loading component...</div>}>
                         <ImageUpload onImageSelect={handleImageSelect} imagePreviewUrl={imagePreviewUrl} hideLabel />
                       </Suspense>
                     </div>
                   </div>
                 </div>
 
-                {/* Component Type Section */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-center my-2">
                     <div className="flex-grow h-px bg-gray-300" />
@@ -295,8 +296,7 @@ const App: React.FC = () => {
                       <button
                         key={type}
                         onClick={() => setComponentType(type)}
-                        className={`p-2 bg-gray-50 rounded-lg text-gray-700 transition flex flex-col items-center justify-center text-center min-h-[60px] ${
-                          componentType === type 
+                        className={`p-2 bg-gray-50 rounded-lg text-gray-700 transition flex flex-col items-center justify-center text-center min-h-[60px] ${componentType === type 
                             ? 'bg-primary/10 border-2 border-primary text-primary' 
                             : 'hover:bg-gray-100 border-2 border-transparent'
                         }`}
@@ -329,7 +329,6 @@ const App: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Advanced Options */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-center my-2">
                     <div className="flex-grow h-px bg-gray-300" />
@@ -360,7 +359,6 @@ const App: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Custom Prompt */}
                 {useCustomPrompt && (
                   <div className="space-y-3">
                     <h3 className="text-sm font-medium text-gray-700">Custom Instructions</h3>
@@ -373,7 +371,6 @@ const App: React.FC = () => {
                   </div>
                 )}
 
-                {/* Error Message */}
                 {error && (
                   <div className="p-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg">
                     {error}
@@ -381,7 +378,6 @@ const App: React.FC = () => {
                 )}
               </div>
 
-              {/* Action Buttons */}
               <div className="p-4 border-t border-gray-100 space-y-2">
                 <button
                   onClick={handleReset}
@@ -396,8 +392,7 @@ const App: React.FC = () => {
                     (useCustomPrompt && !customPrompt.trim()) ||
                     (!useCustomPrompt && (!selectedImageFile && !imagePreviewUrl))
                   }
-                  className={`w-full px-4 py-3 rounded-lg font-medium transition-all ${
-                    isLoading 
+                  className={`w-full px-4 py-3 rounded-lg font-medium transition-all ${isLoading 
                       ? 'bg-red-500 hover:bg-red-600 text-white' 
                       : 'bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed'
                   }`}
@@ -409,9 +404,7 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* Results Panel */}
           <div className="flex-1 flex flex-col bg-white">
-            {/* Results Header */}
             <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between bg-gray-50">
               <div className="flex items-center space-x-4">
                 <h2 className="text-lg font-semibold text-gray-800">
@@ -429,8 +422,7 @@ const App: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <button 
                   onClick={() => setIsCodeViewActive(!isCodeViewActive)}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                    isCodeViewActive 
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${isCodeViewActive 
                       ? 'bg-indigo-600 text-white hover:bg-indigo-700' 
                       : 'text-indigo-600 hover:bg-indigo-50'
                   }`}
@@ -443,11 +435,9 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Results Content */}
             <div className="flex-1 relative overflow-hidden">
-              {/* Les deux panels sont toujours montés, on affiche/cache avec display */}
               <div style={{ display: isCodeViewActive ? 'block' : 'none', height: '100%' }}>
-                <Suspense fallback={<div className="flex items-center justify-center h-full text-gray-400">Chargement du code...</div>}>
+                <Suspense fallback={<div className="flex items-center justify-center h-full text-gray-400">Loading code...</div>}>
                   <CodePanel 
                     className="absolute inset-0"
                     code={generatedCodeForDisplay}
@@ -462,7 +452,7 @@ const App: React.FC = () => {
                 </Suspense>
               </div>
               <div style={{ display: !isCodeViewActive ? 'block' : 'none', height: '100%' }}>
-                <Suspense fallback={<div className="flex items-center justify-center h-full text-gray-400">Chargement de l'aperçu...</div>}>
+                <Suspense fallback={<div className="flex items-center justify-center h-full text-gray-400">Loading preview...</div>}>
                   <PreviewPanel 
                     className="absolute inset-0"
                     htmlContent={
@@ -473,13 +463,13 @@ const App: React.FC = () => {
                     isFullscreen={isPreviewFullscreen}
                     onToggleFullscreen={() => setIsPreviewFullscreen(!isPreviewFullscreen)}
                     isLoading={isLoading && !generatedHtml}
+                    onShowDocs={() => setView('docs')}
                   />
                 </Suspense>
               </div>
             </div>
           </div>
 
-          {/* Overlay for mobile when config panel is open */}
           {showConfigPanel && (
             <div 
               className="lg:hidden absolute inset-0 bg-black bg-opacity-50 z-30"
