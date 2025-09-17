@@ -60,9 +60,7 @@ export const INITIAL_ADVANCED_OPTIONS: AdvancedOptions = {
 
 export const DEFAULT_COMPONENT_TYPE = ComponentType.Section;
 
-export const GEMINI_MODEL_TEXT = 'gemini-2.5-flash-preview-04-17';
-// export const GEMINI_MODEL_IMAGE = 'imagen-3.0-generate-002'; // Not used for HTML generation directly here
-
+export const GEMINI_MODEL_TEXT = 'gemini-2.5-flash';
 export const MAX_FILE_SIZE_MB = 5;
 export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 export const ACCEPTED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
